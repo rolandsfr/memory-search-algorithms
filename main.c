@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cli.h>
 #include <algorithms.h>
+#include <parsers.h>
 
 int main(int argc, char** argv) {
     // parse input
@@ -11,7 +12,16 @@ int main(int argc, char** argv) {
     char* chunks_file_name = get_file_name(CHUNKS, input_files);
     char* sizes_file_name = get_file_name(SIZES, input_files);
 
-    printf("Chunks file: %s\n Sizes file: %s\n", chunks_file_name, sizes_file_name);
+    ParsedFile* chunks = parse_file(chunks_file_name);
+    ParsedFile* sizes = parse_file(sizes_file_name);
+
+    // print which files are being used
+    printf("Setting up files:\n - Chunks file: %s (%d records)\n - Sizes file: %s (%d records)\n",
+        chunks_file_name,
+        chunks->size,
+        sizes_file_name,
+        sizes->size
+    );
 
     return 0;
 }

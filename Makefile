@@ -1,10 +1,10 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Ilib/cli -Ilib/algorithms
+CFLAGS = -Wall -Wextra -Ilib/cli -Ilib/algorithms  -Ilib/parsers
 LDFLAGS = 
 
 # Find all source files recursively
-SRCS = main.c $(wildcard lib/cli/*.c) $(wildcard lib/algorithms/*.c)
+SRCS = main.c $(wildcard lib/cli/*.c) $(wildcard lib/algorithms/*.c)  $(wildcard lib/parsers/*.c)
 OBJS = $(SRCS:.c=.o)
 
 # Output binary

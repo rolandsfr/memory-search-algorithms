@@ -55,14 +55,18 @@ Make sure you have chunks.txt and sizes.txt files in the root dir
 
 # Project structure
 
-## cli
-
-`lib/cli.h` contains headers for command line interface functions to parse flags and their values
-
-## algorithms
-
-`lib/algorithms.h` contains function definitions for each of free memory search algorithms.
-
 ## Main
 
 `main.c` serves as an entry file for benchmarking algorithms, parsing the cli input and outputting the results.
+
+## cli
+
+`lib/cli` contains headers for command line interface functions to parse flags and their values
+
+## algorithms
+
+`lib/algorithms` contains headers for each of free memory search algorithms.
+
+## parsers
+
+`lib/parsers` contains headers for file parsers, which construct dynamic list of integers from the files read

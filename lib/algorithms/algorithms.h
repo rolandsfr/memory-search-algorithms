@@ -4,7 +4,7 @@
 typedef struct SearchAlgorithm {
     // search algorithms returns nothing as soon as appropriate chunk is found
     // it accepts dynamic array of chunks as integers and dynamic array of sizes as integers for each to find a chunk for
-    void (*search)(int* chunks, int* sizes);
+    void (*search)(int* chunks, int chunks_count, int* sizes, int sizes_count);
 } SearchAlgorithm;
 
 /*

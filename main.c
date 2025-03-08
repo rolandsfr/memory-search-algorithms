@@ -23,5 +23,7 @@ int main(int argc, char** argv) {
         sizes->size
     );
 
+    search_best_fit_runner.search(chunks->array, chunks->size, sizes->array, sizes->size);
+
     return 0;
 }

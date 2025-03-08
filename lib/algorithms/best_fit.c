@@ -1,6 +1,6 @@
 #include <algorithms.h>
 
-void search_best_fit(int* chunks, int* sizes) {
+void search_best_fit(int* chunks, int chunks_count, int* sizes, int sizes_count) {
 
 }
 

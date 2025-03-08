@@ -9,6 +9,11 @@ ParsedFile* parse_file(const char* file_name) {
     int* list = (int*)malloc(BUFFER_SIZE * sizeof(int));
     FILE* file = fopen(file_name, "r");
 
+    if(file == NULL) {
+        printf("File %s does not exist!\n", file_name);
+        exit(1);
+    }
+
     int num = 0;
     int ch; 
     int size = 0;

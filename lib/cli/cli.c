@@ -18,7 +18,8 @@ void set_param(char* param_short_name, char* file_name, char** input_files) {
     if(hash != -1) {
         input_files[hash] = file_name;
     } else {
-        printf("[FATAL]: Unrecognized param: %s\n", param_short_name);
+        printf("Unrecognized param: %s\n", param_short_name);
+        exit(1);
     }
 }
 
@@ -26,7 +27,7 @@ void set_param(char* param_short_name, char* file_name, char** input_files) {
 void parse_input(int argc, char** argv, char** input_files) {
     if(argc < 1 + 4) {
         printf("Invalid number of parameters: %d!\n", argc);
-        return;
+        exit(1);
     }
 
     for (int i = 1; i < argc; i++) {

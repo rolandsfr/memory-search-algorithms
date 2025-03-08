@@ -2,6 +2,7 @@
 #include <cli.h>
 #include <algorithms.h>
 #include <parsers.h>
+#include <string.h>
 
 int main(int argc, char** argv) {
     // parse input
@@ -25,12 +26,22 @@ int main(int argc, char** argv) {
     );
 
     if(algorithm != NULL) {
+        SearchAlgorithm algorithm_runner;
         printf("Using %s algorithm\n", algorithm);
+
+        // TODO: complete with the rest of algorithms when they are done
+        if(strcmp(algorithm, "best_fit") == 0) {
+            algorithm_runner.search = search_best_fit_runner.search;
+        }
+
+        if(algorithm_runner.search != NULL) {
+            algorithm_runner.search(chunks->array, chunks->size, sizes->array, sizes->size);
+        }
+
     }
 
     printf("\n");
 
-    search_best_fit_runner.search(chunks->array, chunks->size, sizes->array, sizes->size);
 
     return 0;
 }

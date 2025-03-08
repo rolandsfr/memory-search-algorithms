@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <cli.h>
 #include <string.h>

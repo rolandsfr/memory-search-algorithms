@@ -12,15 +12,16 @@ The goal of the poragm is to find a chunk for a each size using different algori
 
 ## Params
 
-| Param | Description                        |
-| ----- | ---------------------------------- |
-| `-c`  | Name of the file containing chunks |
-| `-s`  | Name of the file containing sizes  |
+| Param | Description                                                                  |
+| ----- | ---------------------------------------------------------------------------- |
+| `-c`  | Name of the file containing chunks                                           |
+| `-s`  | Name of the file containing sizes                                            |
+| `-a`  | (optional) Name of the file where the algorithm to be benchmarked is defined |
 
 ## Example
 
 ```bash
-./main -c chunks.txt -d sizes.txt
+./main -c chunks.txt -d sizes.txt -a best_fit
 ```
 
 # Development and building

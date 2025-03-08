@@ -1,7 +1,10 @@
-typedef enum FILE_TYPE {
+#define PARAMS_COUNT 3
+
+typedef enum PARAM {
     CHUNKS,
-    SIZES
+    SIZES,
+    ALGO
 } FILE_TYPE;
 
 void parse_input(int argc, char** argv, char** input_files);
-char* get_file_name(FILE_TYPE type, char** input_files);
+char* get_param_value(enum PARAM param, char** params);

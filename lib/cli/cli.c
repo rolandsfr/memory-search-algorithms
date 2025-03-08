@@ -7,6 +7,8 @@ int hash_param(char* param_short_name) {
     if(strcmp(param_short_name, "-c") == 0) return 0;
     // hash for sizes param
     else if(strcmp(param_short_name, "-s") == 0) return 1;
+    // hash for algorithm param
+    else if(strcmp(param_short_name, "-a") == 0) return 2;
     // default
     return -1;
 }
@@ -22,7 +24,7 @@ void set_param(char* param_short_name, char* file_name, char** input_files) {
 
 // returns 0 for flag not found or else 1
 void parse_input(int argc, char** argv, char** input_files) {
-    if(argc != 1 + 4) {
+    if(argc < 1 + 4) {
         printf("Invalid number of parameters: %d!\n", argc);
         return;
     }
@@ -35,13 +37,16 @@ void parse_input(int argc, char** argv, char** input_files) {
     }
 }
 
-char* get_file_name(FILE_TYPE type, char** input_files) {
-    switch(type) {
+char* get_param_value(enum PARAM param, char** params) {
+    switch(param) {
         case CHUNKS: {
-            return input_files[hash_param("-c")];
+            return params[hash_param("-c")];
         }
         case SIZES: {
-            return input_files[hash_param("-s")];
+            return params[hash_param("-s")];
+        }
+        case ALGO: {
+            return params[hash_param("-a")];
         }
         default: {
             return NULL;

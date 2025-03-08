@@ -28,7 +28,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 test: 
-	./$(TARGET) -c chunks.txt -s sizes.txt
+	./$(TARGET) -c chunks.txt -s sizes.txt -a best_fit
 
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

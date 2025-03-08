@@ -27,5 +27,8 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
+test: 
+	./$(TARGET) -c chunks.txt -s sizes.txt
+
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

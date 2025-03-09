@@ -1,6 +1,5 @@
-typedef struct ParsedFile {
-    int* array;
-    int size;
-} ParsedFile;
+#include <stdio.h>
+#include <stdlib.h>
 
-ParsedFile* parse_file(const char* file_name);
+int read_next_int(FILE* stream);
+FILE* open_number_stream_from_file(char* file_name);

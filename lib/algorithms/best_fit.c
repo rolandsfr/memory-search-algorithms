@@ -1,10 +1,16 @@
 #include <algorithms.h>
+#include <parsers.h>
 
-void search_best_fit(int* chunks, int chunks_count, int* sizes, int sizes_count) {
+void search_best_fit(FILE* stream) {
+    int num;
 
+    // TODO: construct binary search tree
+    while((num = read_next_int(stream)) != EOF) {
+        printf("%d\n", num);
+    }
 }
 
 SearchAlgorithm search_best_fit_runner = {
-    .search = search_best_fit
+    .start = search_best_fit
 };
 

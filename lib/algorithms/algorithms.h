@@ -1,10 +1,12 @@
+#include <stdio.h>
+
 /* 
     SearchAlgorithm struct for virtual function definition
 */
 typedef struct SearchAlgorithm {
     // search algorithms returns nothing as soon as appropriate chunk is found
-    // it accepts dynamic array of chunks as integers and dynamic array of sizes as integers for each to find a chunk for
-    void (*search)(int* chunks, int chunks_count, int* sizes, int sizes_count);
+    // accepts a files stream that can use number iterator read_next_int to construct own data structure
+    void (*start)(FILE* stream);
 } SearchAlgorithm;
 
 /*

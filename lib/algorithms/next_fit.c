@@ -50,7 +50,7 @@ void search_next_fit(FILE* stream) {
     */
     int required_size = sizeof(int);
 
-    while (1) {
+    while (current != NULL) {
       /* Ja ir brīva vieta un pietiekami liela, lai ievietotu skaitli */
       if (current->is_free && current->size >= required_size) {
         /* Ja atrastais bloks ir lielāks nekā nepieciešams, tad to sadala

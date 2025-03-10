@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     char* algorithm = get_param_value(ALGO, params);
 
     FILE* chunks_fs = open_number_stream_from_file(chunks_file_name);
-    FILE* sizes_fs = open_number_stream_from_file(sizes_fs);
+    FILE* sizes_fs = open_number_stream_from_file(sizes_file_name);
 
     // print which files are being used and which algorithm bechmarked
     printf("Setting up files:\n - Chunks file: %s\n - Sizes file: %s\n",
@@ -30,6 +30,14 @@ int main(int argc, char** argv) {
         // TODO: complete with the rest of algorithms when they are done
         if(strcmp(algorithm, "best_fit") == 0) {
             algorithm_runner.start = search_best_fit_runner.start;
+        }
+
+        if(strcmp(algorithm, "first_fit") == 0) {
+            algorithm_runner.start = search_first_fit_runner.start;
+        }
+
+        if(strcmp(algorithm, "next_fit") == 0) {
+            algorithm_runner.start = search_next_fit_runner.start;
         }
 
         if(algorithm_runner.start != NULL) {

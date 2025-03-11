@@ -10,7 +10,48 @@ typedef struct MemoryBlock {
   struct MemoryBlock *next;
 } MemoryBlock;
 
+/* It kā vienkāršāk bez saraksta, bet ar statisku masīvu.
+Varbū tomēr nē, un piestrādāt pie saraksta */
 void search_first_fit(FILE* stream) {
+  int num;
+  int memory[MEM_SIZE];
+  
+  /* Inicializējam visu atmiņu kā brīvu */
+  for (int i = 0; i < MEM_SIZE; i++) {
+    memory[i] = 0;  
+  }
+  
+  /* Nolasām visus pieprasījumus no faila */
+  while( (num = read_next_int(stream)) != EOF ) {
+    /* Pieņemam, ka katrs skaitlis aizņem int izmēru */
+    int size_needed = sizeof(int);  
+    int allocated = 0;  
+    
+    /* FirstFit algoritms - meklējam pirmo pietiekami lielu brīvu vietu */
+    for (int i = 0; i <= TOTAL_MEMORY_SIZE - size_needed; i++) {
+      /* Pārbaudām, vai atmiņas bloks ir brīvs */
+      int free_block = 1;
+      for (int j = 0; j < size_needed; j++) {
+        if (memory[i + j] != 0) {
+          free_block = 0;
+          break;
+        }
+      }
+      
+      /* Ja atrasts brīvs bloks, piešķiram tam atmiņu */
+      if (free_block) {
+        for (int j = 0; j < size_needed; j++) {
+          memory[i + j] = 1; 
+        }
+        allocated = 1;
+        break;
+      }
+    }
+  }
+}
+
+/* Izmanto sarakstu, sarežģīti un hvz, vai strādās */
+void search_first_fit_struct(FILE* stream) {
   int num;
   MemoryBlock *head = NULL;
   

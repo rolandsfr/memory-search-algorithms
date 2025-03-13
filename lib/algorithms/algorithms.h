@@ -6,7 +6,7 @@
 typedef struct SearchAlgorithm {
     // search algorithms returns nothing as soon as appropriate chunk is found
     // accepts a files stream that can use number iterator read_next_int to construct own data structure
-    void (*start)(FILE* shunks_fs, FILE* sizes_fs);
+    void (*start)(FILE* chunks_fs, FILE* sizes_fs);
 } SearchAlgorithm;
 
 /*

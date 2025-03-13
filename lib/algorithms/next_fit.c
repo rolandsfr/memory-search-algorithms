@@ -14,90 +14,59 @@ Ja nav brīva bloka, tad atgriež kļūdu.
 /* Pieņemt, ka izdalītās atmiņas kopējais apjoms ir 1024 baiti. */
 #define MEM_SIZE 1024 
 
-typedef struct MemoryBlock {
-  size_t size;
-  int is_free;
-  int value;
-  struct MemoryBlock* next;
-} MemoryBlock;
+unsigned char mybuffer[MEM_SIZE];
+size_t next_fit_index = 0;
+
+void *myalloc(size_t size) {
+  size_t start_index;
+  size_t free_space;
+  size_t alloc_start;
+  size_t i;
+
+  if (size == 0 || size > MEM_SIZE) {
+    return NULL;
+  }
+
+  start_index = next_fit_index;
+  free_space = 0;
+
+  while (free_space < size) {
+    if (mybuffer[next_fit_index] == 0) {
+      free_space++;
+    } else {
+      free_space = 0;
+    }
+
+    next_fit_index = (next_fit_index + 1) % MEM_SIZE;
+
+    if (next_fit_index == start_index) {
+      return NULL;
+    }
+  }
+
+  alloc_start = (next_fit_index + MEM_SIZE - free_space) % MEM_SIZE;
+  for (i = 0; i < size; i++) {
+    mybuffer[alloc_start + i] = 1;
+  }
+
+  next_fit_index = (alloc_start + size) % MEM_SIZE;
+  return &mybuffer[alloc_start];
+}
 
 void search_next_fit(FILE* stream) {
   int num;
-  MemoryBlock *head = NULL;
-  MemoryBlock *last_allocation = NULL;
-
-  /* Init mem */
-  head = (MemoryBlock *)malloc(sizeof(MemoryBlock));
-  if (head == NULL) {
-    /* Fail to init mem */
-    return;
-  }
-  
-  head->size = MEM_SIZE;
-  head->is_free = 1;
-  head->next = NULL;
-
-  /* Start from the beginning */
-  last_allocation = head; 
 
   while ( (num = read_next_int(stream)) != EOF) {
-    MemoryBlock *current = last_allocation;
-    MemoryBlock *start = last_allocation;
-    int wrapped = 0;
-    int allocated = 0;
-    /* Pieņemam, ka katrs skaitlis aizņem int izmēru.
-      TODO: Bet varbūt MemoryBlock? 
-    */
-    int required_size = sizeof(int);
-
-    while (current != NULL) {
-      /* Ja ir brīva vieta un pietiekami liela, lai ievietotu skaitli */
-      if (current->is_free && current->size >= required_size) {
-        /* Ja atrastais bloks ir lielāks nekā nepieciešams, tad to sadala
-        */
-        if (current->size > required_size + sizeof(MemoryBlock)) {
-          MemoryBlock *new_block =  (MemoryBlock *)(
-                                        (char *)current + 
-                                        sizeof(MemoryBlock) + 
-                                        required_size);
-
-          new_block->size = current->size - required_size - sizeof(MemoryBlock);
-          new_block->is_free = 1;
-          new_block->next = current->next;
-          
-          current->size = required_size;
-          current->next = new_block;
-        }
-
-      current->is_free = 0;
-      current->value = num;
-      /* Atjauno pēdējo alloc vietu */
-      last_allocation = current; 
-      allocated = 1;
-      break;
-    }
-
-    current = current->next;
-
-    /* Ja ir saraksta beigās, tad atpakaļ uz sākumu */
-    if (current == NULL) {
-      current = head;
-      wrapped = 1;
-    }
-
-    /* Apiets pilns aplis un atpakaļ sākuma punktā */
-    if (wrapped && current == start) {
-      break;
+    /* void *ptr = myalloc(sizeof(int)); */
+    void *ptr = myalloc(MEM_SIZE);
+    if (ptr != NULL) {
+      /* printf("[ INFO ] Allocated %lu bytes at address %p\n", sizeof(int), ptr); */
+      printf("[ INFO ] Allocated %lu bytes at address %p\n", MEM_SIZE, ptr);
+    } else {
+      /* printf("[ ERROR ] Failed to allocate %lu bytes\n", sizeof(int)); */
+      printf("[ ERROR ] Failed to allocate %lu bytes\n", MEM_SIZE);
     }
   }
-
-  /* Tīrīt atmiņu */
-  while (head != NULL) {
-    MemoryBlock *tmp = head;
-    head = head->next;
-    free(tmp);
-  }
-
 }
 
 SearchAlgorithm search_next_fit_runner = {

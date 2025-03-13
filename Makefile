@@ -30,5 +30,8 @@ run: $(TARGET)
 test: 
 	./$(TARGET) -c chunks.txt -s sizes.txt -a best_fit
 
+next_fit:
+	./$(TARGET) -c x1 -s x2 -a next_fit
+
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
         }
 
         if(algorithm_runner.start != NULL) {
-            algorithm_runner.start(chunks_fs);
+            algorithm_runner.start(chunks_fs, sizes_fs);
         }
 
     }

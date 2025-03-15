@@ -3,6 +3,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Ilib/cli -Ilib/algorithms  -Ilib/parsers
 LDFLAGS = 
 
+DEBUG_FLAGS = -g
+
+
 # Find all source files recursively
 SRCS = main.c $(wildcard lib/cli/*.c) $(wildcard lib/algorithms/*.c)  $(wildcard lib/parsers/*.c)
 OBJS = $(SRCS:.c=.o)
@@ -13,6 +16,10 @@ TARGET = main
 # Build the target
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+# Debug build
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: clean $(TARGET)
 
 # Rule to compile source files into object files
 # Adjust output path to match object location
@@ -27,8 +34,15 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
+# Run debug build
+run-debug: debug
+	./$(TARGET)
+
 test: 
 	./$(TARGET) -c chunks.txt -s sizes.txt -a best_fit
+
+next_fit:
+	./$(TARGET) -c x1 -s x2 -a next_fit
 
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

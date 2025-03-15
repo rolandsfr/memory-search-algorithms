@@ -53,16 +53,11 @@ void *nextfit_alloc(size_t size) {
   return &mybuffer_nextfit[alloc_start];
 }
 
-/* 
-TODO: 
-(1) rename stream to chunks_fs
-(2) add sizes_fs as a parameter
-(3) use both chunks_fs and sizes_fs to read the next integers
-*/
+// TODO: use both chunks_fs and sizes_fs to read the next integers
 void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
   int num;
 
-  while ( (num = read_next_int(stream)) != EOF) {
+  while ( (num = read_next_int(chunks_fs)) != EOF) {
     /* void *ptr = nextfit_alloc(sizeof(int)); */
     void *ptr = nextfit_alloc(MEM_SIZE);
     if (ptr != NULL) {

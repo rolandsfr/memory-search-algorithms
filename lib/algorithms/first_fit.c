@@ -37,10 +37,10 @@ void *firstfit_alloc(size_t size) {
   return NULL;
 }
 
-void search_first_fit(FILE* stream) {
+void search_first_fit(FILE* chunks_fs, FILE* sizes_fs) {
   int num;
 
-  while ( (num = read_next_int(stream)) != EOF) {
+  while ( (num = read_next_int(chunks_fs)) != EOF) {
     void *ptr = firstfit_alloc(sizeof(int));
     if (ptr != NULL) {
       printf("[ INFO ] Allocated %lu bytes at address %p\n", sizeof(int), ptr);

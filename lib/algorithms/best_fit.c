@@ -46,8 +46,7 @@ Node* find_min(int start, Node* memory) {
             if (min == NULL || curr->value < min->value) {
                 min = curr;
                 
-                /* min is a node and we probly wanna have value to compare with int*/
-                if(min->value == start) return min;
+                if(min == start) return min;
             }
         }
         curr = curr->next;

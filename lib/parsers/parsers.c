@@ -14,7 +14,6 @@ int read_next_int(FILE* stream) {
 
         int digit = ch - '0';
 
-
         if(ch >= '0' && ch <= '9') {
             // parse the number from a char type and merge with what's currently accumulated in the line that is being read from file stream
             num = num * 10 + (ch - '0');

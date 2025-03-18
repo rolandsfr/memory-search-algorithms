@@ -46,7 +46,7 @@ Node* find_min(int start, Node* memory) {
             if (min == NULL || curr->value < min->value) {
                 min = curr;
                 
-                if(min == start) return min;
+                if(min->value == start) return min;
             }
         }
         curr = curr->next;

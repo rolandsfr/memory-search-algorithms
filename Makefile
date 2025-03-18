@@ -1,13 +1,13 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Ilib/cli -Ilib/algorithms  -Ilib/parsers
+CFLAGS = -Wall -Wextra -Ilib/cli -Ilib/algorithms  -Ilib/parsers -Ilib/utils
 LDFLAGS = 
 
 DEBUG_FLAGS = -g
 
 
 # Find all source files recursively
-SRCS = main.c $(wildcard lib/cli/*.c) $(wildcard lib/algorithms/*.c)  $(wildcard lib/parsers/*.c)
+SRCS = main.c $(wildcard lib/cli/*.c) $(wildcard lib/algorithms/*.c)  $(wildcard lib/parsers/*.c) $(wildcard lib/utils/*.c)
 OBJS = $(SRCS:.c=.o)
 
 # Output binary
@@ -42,7 +42,11 @@ test:
 	./$(TARGET) -c chunks.txt -s sizes.txt -a best_fit
 
 next_fit:
-	./$(TARGET) -c x1 -s x2 -a next_fit
+	./$(TARGET) -c x1 -s x2 -a next_fit  > next_fit.txt
+
+first_fit:
+	./$(TARGET) -c x1 -s x2 -a first_fit  > first_fit.txt
+
 
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

@@ -1,73 +1,99 @@
-/*
-
-Vispirms izveidot vienu lielu brīvu bloku, kas atbilst izdalītai kopējai atmiņai.
-Meklējot brīv vietu skaitlim, pārbauda, vai ir pietiekami liels brīvs bloks.
-Ja ir, tad ievieto skaitli šajā blokā.
-Ja brīvs bloks ir lielāks nekā nepieciešams, tad sadala bloku divos blokos - vienu skaitlim, otru atstāj brīvu.
-Ja brīvs bloks ir mazāks nekā nepieciešams, tad meklē nākamo brīvo bloku.
-Ja nav brīva bloka, tad atgriež kļūdu.
-
-*/
 #include <algorithms.h>
 #include <parsers.h>
+#include <time.h>
+#include <evaluation.h>
 
 /* Pieņemt, ka izdalītās atmiņas kopējais apjoms ir 1024 baiti. */
-#define MEM_SIZE 1024 
+#define MEMORY_CAP 1024
 
-unsigned char mybuffer_nextfit[MEM_SIZE];
-size_t next_fit_index = 0;
-
-void *nextfit_alloc(size_t size) {
-  size_t start_index;
-  size_t free_space;
-  size_t alloc_start;
-  size_t i;
-
-  if (size == 0 || size > MEM_SIZE) {
-    return NULL;
-  }
-
-  start_index = next_fit_index;
-  free_space = 0;
-
-  while (free_space < size) {
-    if (mybuffer_nextfit[next_fit_index] == 0) {
-      free_space++;
-    } else {
-      free_space = 0;
-    }
-
-    next_fit_index = (next_fit_index + 1) % MEM_SIZE;
-
-    if (next_fit_index == start_index) {
-      return NULL;
-    }
-  }
-
-  alloc_start = (next_fit_index + MEM_SIZE - free_space) % MEM_SIZE;
-  for (i = 0; i < size; i++) {
-    mybuffer_nextfit[alloc_start + i] = 1;
-  }
-
-  next_fit_index = (alloc_start + size) % MEM_SIZE;
-  return &mybuffer_nextfit[alloc_start];
+Node* create_nf_node(int value) {
+  Node* node = (Node*)(malloc(sizeof(Node)));
+  node->value = value;
+  node->next = NULL;
+  node->is_free = 1;
+  return node;
 }
 
-// TODO: use both chunks_fs and sizes_fs to read the next integers
-void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
+Node* create_nf_list(FILE* stream) {
   int num;
+  Node* head = NULL;
+  Node* tail = NULL;
 
-  while ( (num = read_next_int(chunks_fs)) != EOF) {
-    /* void *ptr = nextfit_alloc(sizeof(int)); */
-    void *ptr = nextfit_alloc(MEM_SIZE);
-    if (ptr != NULL) {
-      /* printf("[ INFO ] Allocated %lu bytes at address %p\n", sizeof(int), ptr); */
-      printf("[ INFO ] Allocated %lu bytes at address %p\n", (unsigned long)MEM_SIZE, ptr);
+  while((num = read_next_int(stream)) != EOF) {
+    Node* node = create_nf_node(num);
+    if(head == NULL) {
+      head = node;
+      tail = node;
     } else {
-      /* printf("[ ERROR ] Failed to allocate %lu bytes\n", sizeof(int)); */
-      printf("[ ERROR ] Failed to allocate %lu bytes\n", (unsigned long)MEM_SIZE);
+      tail->next = node;
+      tail = node;
     }
   }
+
+  return head;
+}
+
+Node* find_next_fit(int size, Node* memory, Node** last_alloc) {
+  Node* curr = *last_alloc ? (*last_alloc)->next : memory;
+
+  while (curr != NULL) {
+    if (curr->is_free && curr->value >= size) {
+      *last_alloc = curr;
+      return curr;
+    }
+    curr = curr->next;
+  }
+
+  curr = memory;
+  while (curr != *last_alloc) {
+    if (curr->is_free && curr->value >= size) {
+      *last_alloc = curr;
+      return curr;
+    }
+    curr = curr->next;
+  }
+
+  return NULL; 
+}
+
+void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
+  Node* memory = create_nf_list(chunks_fs);
+  Node* last_alloc = NULL;
+  clock_t start, end;
+  int size;
+  int total_allocated_size = 0;
+  int allocations_succeeded = 0;
+  int largest_request = 0;
+
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if (size > largest_request) {
+      largest_request = size;
+    }
+  }
+  rewind(sizes_fs);
+
+  /* Sākam mērīt laiku */
+  start = clock();
+
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if(total_allocated_size + size > MEMORY_CAP) break;
+
+    Node* next_fit = find_next_fit(size, memory, &last_alloc);
+
+    if(next_fit != NULL) {
+      next_fit->is_free = 0;
+      total_allocated_size += size;
+      allocations_succeeded++;
+      /* printf("\tChunk for %d -> %lu\n", size, (unsigned long)(first_fit->value)); */
+    } 
+  } 
+  /* Beidzam mērīt laiku */
+  end = clock();
+
+  printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+  printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
+  printf(" - Allocated blocks: %d\n", allocations_succeeded);
+  printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
 }
 
 SearchAlgorithm search_next_fit_runner = {

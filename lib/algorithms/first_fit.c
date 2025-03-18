@@ -1,55 +1,126 @@
+#include <stdlib.h>
 #include <algorithms.h>
 #include <parsers.h>
+#include <evaluation.h>
+#include <time.h>
 
-#define MEM_SIZE 1024
+#define MEMORY_CAP 1024
 
-unsigned char mybuffer_firstfit[MEM_SIZE];
+// typedef struct Node {
+//   long int value;
+//   int is_free;
+//   struct Node* next;
+// } Node;
 
-void *firstfit_alloc(size_t size) {
-  size_t free_space;
-  size_t alloc_start;
-  size_t i;
 
-  if (size == 0 || size > MEM_SIZE) {
-    return NULL;
+Node* create_ff_node(int value) {
+  Node* node = (Node*)(malloc(sizeof(Node)));
+  node->value = value;
+  node->next = NULL;
+  node->is_free = 1;
+  return node;
+}
+
+Node* create_ff_list(FILE* stream) {
+  int num;
+  Node* head = NULL;
+  Node* tail = NULL;
+
+  while((num = read_next_int(stream)) != EOF) {
+    Node* node = create_ff_node(num);
+    if(head == NULL) {
+      head = node;
+      tail = node;
+    } else {
+      tail->next = node;
+      tail = node;
+    }
   }
 
-  for (size_t start_index = 0; start_index < MEM_SIZE; start_index++) {
-    free_space = 0;
+  return head;
+}
 
-    while (free_space < size && start_index + free_space < MEM_SIZE) {
-      if (mybuffer_firstfit[start_index + free_space] == 0) {
-        free_space++;
-      } else {
-        break;
-      }
-    }
+Node* find_first_fit(int size, Node* memory) {
+  Node* curr = memory;
 
-    if (free_space >= size) {
-      alloc_start = start_index;
-      for (i = 0; i < size; i++) {
-        mybuffer_firstfit[alloc_start + i] = 1;
-      }
-      return &mybuffer_firstfit[alloc_start];
+  while (curr != NULL) {
+    if (curr->is_free && curr->value >= size) {
+      return curr;
     }
+    curr = curr->next;
   }
 
-  return NULL;
+  return NULL; 
+}
+
+void search_first_fit_0(FILE* chunks_fs , FILE* sizes_fs) {
+  Node* memory = create_ff_list(chunks_fs);
+
+  int size;
+  int total_allocated_size = 0;
+  int allocations_succeeded = 0;
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if(total_allocated_size + size > MEMORY_CAP) break;
+
+    Node* first_fit = find_first_fit(size, memory);
+
+    if(first_fit != NULL) {
+      first_fit->is_free = 0;
+      total_allocated_size += size;
+      allocations_succeeded++;
+      /* uncomment for detailed debug 
+      printf("Chunk for %d -> %lu\n", size, (unsigned long)(first_fit->value));*/
+    } 
+  } 
+
+  printf("Allocations succeeded: %d\nTotal memory allocated: %d\n", allocations_succeeded, total_allocated_size);
 }
 
 void search_first_fit(FILE* chunks_fs, FILE* sizes_fs) {
-  int num;
+  Node* memory = create_ff_list(chunks_fs);
+  Node* first_fit = NULL;
+  int largest_request = 0;
+  int size;
+  int total_allocated_size = 0;
+  int allocations_succeeded = 0;
+  clock_t start, end;
 
-  while ( (num = read_next_int(chunks_fs)) != EOF) {
-    void *ptr = firstfit_alloc(sizeof(int));
-    if (ptr != NULL) {
-      printf("[ INFO ] Allocated %lu bytes at address %p\n", sizeof(int), ptr);
-    } else {
-      printf("[ ERROR ] Failed to allocate %lu bytes\n", sizeof(int));
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if (size > largest_request) {
+      largest_request = size;
     }
   }
+  rewind(sizes_fs);
+
+  /* Sākam mērīt laiku */
+  start = clock();
+
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if(total_allocated_size + size > MEMORY_CAP) {
+      break;
+    }
+
+    first_fit = find_first_fit(size, memory);
+
+    if(first_fit != NULL) {
+      first_fit->is_free = 0;
+      total_allocated_size += size;
+      allocations_succeeded++;
+      /* printf("\tChunk for %d -> %lu\n", size, (unsigned long)(first_fit->value)); */
+    }
+  }
+
+  /* Beidzam mērīt laiku */
+  end = clock();
+
+  printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+  printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
+  printf(" - Allocated blocks: %d\n", allocations_succeeded);
+  printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
+
 }
 
 SearchAlgorithm search_first_fit_runner = {
   .start = search_first_fit
 };
+

@@ -126,7 +126,7 @@
 	
 	Gan First Fit, gan Next Fit algoritmos laika mērījums tiek veikts, izmantojot standarta C bibliotēkas funkciju \texttt{clock()}. Laika mērīšanas process notiek šādi:
 	
-	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble]{c}
+	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
 		start = clock();
 		
 		// ... algoritma izpilde ...
@@ -142,7 +142,7 @@
 	
 	Fragmentācija ir svarīgs rādītājs atmiņas pārvaldības algoritmu novērtēšanā. Šajā projektā fragmentācija tiek aprēķināta ar \texttt{calculate\_fragmentation} funkciju:
 	
-	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble]{c}
+	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
 		double calculate_fragmentation(Node* memory, int largest_request) {
 			size_t total_free = 0;
 			size_t largest_free_block = 0;
@@ -306,7 +306,7 @@
 			\item \textbf{Best Fit} ir labs, kad atmiņas efektivitāte ir svarīgāka par ātrdarbību.
 		\end{itemize}
 		
-		\item \textbf{realizācijas apsvērumi}:
+		\item \textbf{Realizācijas apsvērumi}:
 		\begin{itemize}
 			\item Visu algoritmu realizācijas izmanto līdzīgu saistītā saraksta struktūru, kas atvieglo to salīdzināšanu.
 			\item Fragmentācijas aprēķināšana ir svarīga algoritmu novērtēšanai un var būt atkarīga no konkrētā lietojuma.

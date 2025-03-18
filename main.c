@@ -30,16 +30,14 @@ int main(int argc, char** argv) {
         // TODO: complete with the rest of algorithms when they are done
         if(strcmp(algorithm, "best_fit") == 0) {
             algorithm_runner.start = search_best_fit_runner.start;
-        }
-
-        if(strcmp(algorithm, "first_fit") == 0) {
+        } else if(strcmp(algorithm, "worst_fit") == 0) {
+            algorithm_runner.start = search_worst_fit_runner.start;
+        } else if(strcmp(algorithm, "first_fit") == 0) {
             algorithm_runner.start = search_first_fit_runner.start;
-        }
-
-        if(strcmp(algorithm, "next_fit") == 0) {
+        } else if(strcmp(algorithm, "next_fit") == 0) {
             algorithm_runner.start = search_next_fit_runner.start;
         }
-
+        
         if(algorithm_runner.start != NULL) {
             algorithm_runner.start(chunks_fs, sizes_fs);
         }

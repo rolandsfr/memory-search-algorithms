@@ -13,7 +13,6 @@ typedef struct SearchAlgorithm {
     Externing different search algorithms to be defined in own separate files]
 */
 extern SearchAlgorithm search_best_fit_runner;
+extern SearchAlgorithm search_worst_fit_runner;
 extern SearchAlgorithm search_next_fit_runner;
 extern SearchAlgorithm search_first_fit_runner;
-
-// TODO: Rest of algorithms...

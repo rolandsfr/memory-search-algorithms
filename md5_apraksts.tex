@@ -32,7 +32,7 @@
 		\item \textbf{Bibliotēkas}:
 		\begin{itemize}
 			\item \textbf{cli}: Komandlīnijas interfeiss parametru apstrādei
-			\item \textbf{algorithms}: Dažādu atmiņas rezervēšanas algoritmu implementācijas
+			\item \textbf{algorithms}: Dažādu atmiņas rezervēšanas algoritmu realizācijas
 			\item \textbf{parsers}: Funkcijas failu lasīšanai un skaitļu parsēšanai
 			\item \textbf{utils}: Atbalsta funkcijas, piemēram, fragmentācijas aprēķināšanai
 		\end{itemize}
@@ -58,7 +58,7 @@
 	
 	\section{First Fit un Next Fit algoritmu realizācijas}
 	
-	\subsection{First Fit algoritma implementācija}
+	\subsection{First Fit algoritma realizācija}
 	
 	First Fit algoritma laika sarežģītība:
 	\begin{itemize}
@@ -68,7 +68,7 @@
 	
 	First Fit vienmēr sāk meklēšanu no saraksta sākuma, tāpēc tas var būt lēnāks algoritms, jo katra pieprasījuma gadījumā ir jāmeklē no sākuma. Tomēr tas bieži vien ir ātrāks nekā Best Fit, jo tam nav jāmeklē visoptimālākais bloks.
 	
-	Algoritma implementācija ir šāda:
+	Algoritma realizācija ir šāda:
 	
 	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
 		Node* find_first_fit(int size, Node* memory) {
@@ -85,7 +85,7 @@
 		}
 	\end{minted}
 	
-	\subsection{Next Fit algoritma implementācija}
+	\subsection{Next Fit algoritma realizācija}
 	
 	Next Fit algoritma laika sarežģītība:
 	\begin{itemize}
@@ -95,7 +95,7 @@
 	
 	Next Fit teorētiski var būt ātrāks nekā First Fit, jo tas turpina meklēšanu no pēdējā izdalītā bloka, nevis sāk no saraksta sākuma. Tomēr realitātē tā efektivitāte ir atkarīga no pieprasījumu un brīvo bloku izvietojuma.
 	
-	Algoritma implementācija ir šāda:
+	Algoritma realizācija ir šāda:
 	
 	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
 		Node* find_next_fit(int size, Node* memory, Node** last_alloc) {
@@ -306,9 +306,9 @@
 			\item \textbf{Best Fit} ir labs, kad atmiņas efektivitāte ir svarīgāka par ātrdarbību.
 		\end{itemize}
 		
-		\item \textbf{Implementācijas apsvērumi}:
+		\item \textbf{realizācijas apsvērumi}:
 		\begin{itemize}
-			\item Visu algoritmu implementācijas izmanto līdzīgu saistītā saraksta struktūru, kas atvieglo to salīdzināšanu.
+			\item Visu algoritmu realizācijas izmanto līdzīgu saistītā saraksta struktūru, kas atvieglo to salīdzināšanu.
 			\item Fragmentācijas aprēķināšana ir svarīga algoritmu novērtēšanai un var būt atkarīga no konkrētā lietojuma.
 			\item Laika mērījumi ir nepieciešami, lai novērtētu algoritmu praktisko efektivitāti.
 		\end{itemize}

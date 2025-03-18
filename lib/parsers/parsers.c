@@ -12,8 +12,8 @@ int read_next_int(FILE* stream) {
             return num;
         }
 
-        /* unused, commented out because of debugger error 
-        int digit = ch - '0'; */
+        int digit = ch - '0';
+
 
         if(ch >= '0' && ch <= '9') {
             // parse the number from a char type and merge with what's currently accumulated in the line that is being read from file stream

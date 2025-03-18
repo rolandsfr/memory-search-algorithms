@@ -57,23 +57,32 @@ Node* find_min(int start, Node* memory) {
 
 
 void search_best_fit(FILE* chunks_fs , FILE* sizes_fs) {
-    Node* memory = create_list(chunks_fs);
+    Node* memory_head = create_list(chunks_fs);
+    Node* memory = memory_head;
 
     int size;
     int total_allocated_size = 0;
     int allocations_succeeded = 0;
     while((size = read_next_int(sizes_fs)) != EOF) {
-        if(total_allocated_size + size > MEMORY_CAP) break;
-
         Node* min = find_min(size, memory);
+
+        // stop the loop if nothing can ever fit in
+        if(total_allocated_size == MEMORY_CAP) break;
+
+        // skip if we the memeory cannot afford to store requested size
+        if(min != NULL && total_allocated_size + min->value > MEMORY_CAP) {
+            continue;
+        }
 
         if(min != NULL) {
             min->is_free = 0;
-            total_allocated_size += size;
+            total_allocated_size += min->value;
             allocations_succeeded++;
             // uncomment for detailed debug
             // printf("Chunk for %d -> %d\n", size, min->value);
         } 
+
+        memory = memory_head;
     } 
 
     printf("Allocations succeeded: %d\nTotal memory allocated: %d\n", allocations_succeeded, total_allocated_size);

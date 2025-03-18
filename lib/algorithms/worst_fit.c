@@ -66,6 +66,8 @@ void search_worst_fit(FILE* chunks_fs , FILE* sizes_fs) {
     int allocations_succeeded = 0;
     while((size = read_next_int(sizes_fs)) != EOF) {
         Node* max = find_max(size, memory);
+            
+        if(total_allocated_size == MEMORY_CAP) break;
 
         if(max != NULL && total_allocated_size + max->value > MEMORY_CAP) {
             break;

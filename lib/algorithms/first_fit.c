@@ -4,7 +4,7 @@
 #include <evaluation.h>
 #include <time.h>
 
-#define TOTAL_MEMORY 1024
+#define MEMORY_CAP 1024
 
 // typedef struct Node {
 //   long int value;
@@ -60,7 +60,7 @@ void search_first_fit_0(FILE* chunks_fs , FILE* sizes_fs) {
   int total_allocated_size = 0;
   int allocations_succeeded = 0;
   while((size = read_next_int(sizes_fs)) != EOF) {
-    if(total_allocated_size + size > TOTAL_MEMORY) break;
+    if(total_allocated_size + size > MEMORY_CAP) break;
 
     Node* first_fit = find_first_fit(size, memory);
 
@@ -96,7 +96,7 @@ void search_first_fit(FILE* chunks_fs, FILE* sizes_fs) {
   start = clock();
 
   while((size = read_next_int(sizes_fs)) != EOF) {
-    if(total_allocated_size + size > TOTAL_MEMORY) {
+    if(total_allocated_size + size > MEMORY_CAP) {
       break;
     }
 

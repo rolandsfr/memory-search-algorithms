@@ -4,7 +4,7 @@
 #include <evaluation.h>
 
 /* Pieņemt, ka izdalītās atmiņas kopējais apjoms ir 1024 baiti. */
-#define TOTAL_MEMORY 1024 
+#define MEMORY_CAP 1024
 
 Node* create_nf_node(int value) {
   Node* node = (Node*)(malloc(sizeof(Node)));
@@ -76,7 +76,7 @@ void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
   start = clock();
 
   while((size = read_next_int(sizes_fs)) != EOF) {
-    if(total_allocated_size + size > TOTAL_MEMORY) break;
+    if(total_allocated_size + size > MEMORY_CAP) break;
 
     Node* next_fit = find_next_fit(size, memory, &last_alloc);
 

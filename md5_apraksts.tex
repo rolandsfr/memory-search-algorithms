@@ -136,7 +136,7 @@
 		printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 	\end{minted}
 	
-	\texttt{CLOCKS\_PER\_SEC} ir konstante, kas norāda pulksteņa tikšķu skaitu sekundē, un tiek izmantota, lai pārveidotu pulksteņa tikšķus sekundēs.
+	Šis ir standarta veids, kā mērīt algoritmu izpildes laiku C valodā. \texttt{CLOCKS\_PER\_SEC} ir konstante, kas norāda pulksteņa tikšķu skaitu sekundē, un tiek izmantota, lai pārveidotu pulksteņa tikšķus sekundēs.
 	
 	\section{Fragmentācijas mērījuma funkcija}
 	
@@ -219,20 +219,17 @@
 	
 	Šī metrika ir īpaši noderīga, lai salīdzinātu dažādus atmiņas pārvaldības algoritmus, jo tā ņem vērā praktiskos ierobežojumus - atmiņas bloki, kas ir pārāk mazi, faktiski kļūst nelietojami lielu pieprasījumu gadījumā. Tas ir reāls fragmentācijas efekts, ko algoritmi cenšas minimizēt.
 	
-	\section{Algoritmu novērtējums}
-	
-	\subsection{Algoritmu mērījumu analīze}
-	
-	No algoritumu izpildes rezultātiem var analizēt algoritmu veiktspēju (sk. 1. tabulu) un var secināt, ka:
+	\section{Algoritmu ātrdarbības novērtējums}
+		
+	No algoritmu izpildes rezultātiem (sk. 1. tabulu) var analizēt algoritmu veiktspēju un var secinānt, ka:
 	
 	\begin{enumerate}
-		\item \textbf{Izpildes laiks}: Next Fit algoritms izpildās aptuveni 21.5\% ātrāk nekā First Fit, kas atbilst teorētiskajiem paredzējumiem. Tas ir tāpēc, ka Next Fit turpina meklēšanu no pēdējā izdalītā bloka, nevis katru reizi sāk no saraksta sākuma.
+		\item \textbf{Izpildes laiks}: Next Fit algoritms izpildās aptuveni 6 reizes ātrāk nekā First Fit (0.000004s pret 0.000024s), kas ievērojami pārsniedz teorētiskos paredzējumus. Tas demonstrē Next Fit algoritma priekšrocību, kad tas turpina meklēšanu no pēdējā izdalītā bloka, nevis katru reizi sāk no saraksta sākuma.
 		
-		\item \textbf{Izdalīto bloku skaits}: First Fit algoritms spēja izdalīt vairāk bloku (728) nekā Next Fit (712). Tas liecina, ka First Fit efektīvāk izmanto pieejamo atmiņu.
+		\item \textbf{Izdalīto bloku skaits}: Abi algoritmi izdalīja vienādu bloku skaitu (99), kas norāda, ka šajā konkrētajā testu scenārijā abi algoritmi spēja apmierināt tādu pašu pieprasījumu skaitu.
 		
-		\item \textbf{Kopējā izdalītā atmiņa}: First Fit izdalīja vairāk atmiņas (3548 baitus) nekā Next Fit (3471 baitus). Šī atšķirība ir proporcionāla izdalīto bloku skaitam.
+		\item \textbf{Kopējā izdalītā atmiņa}: Abi algoritmi izdalīja vienādu atmiņas apjomu (980 baitus), kas atbilst vienādam izdalīto bloku skaitam.
 	\end{enumerate}
-
 	
 	\begin{table}[h]
 		\centering
@@ -240,93 +237,63 @@
 			\toprule
 			\textbf{Metrika} & \textbf{First Fit} & \textbf{Next Fit} \\
 			\midrule
-			Izpildes laiks (sekundes) & 0.000246 & 0.000193 \\
-			Fragmentācijas koeficients & 0.362751 & 0.425682 \\
-			Izdalīto bloku skaits & 728 & 712 \\
-			Kopējā izdalītā atmiņa (baiti) & 3548 & 3471 \\
+			Izpildes laiks (sekundes) & 0.000024 & 0.000004 \\
+			Fragmentācijas koeficients & 0.000005 & 0.000027 \\
+			Izdalīto bloku skaits & 99 & 99 \\
+			Kopējā izdalītā atmiņa (baiti) & 980 & 980 \\
 			\bottomrule
 		\end{tabular}
 		\caption{First Fit un Next Fit algoritmu mērījumu rezultāti}
 		\label{tab:performance}
 	\end{table}
-
-
 	
 	\subsection{Secinājumi par ātrdarbību}
 	
 	Saskaņā ar teorētiskiem apsvērumiem un praktiskiem mērījumiem:
 	
 	\begin{enumerate}
-		\item Next Fit ir ātrāks nekā First Fit, kā to pierāda mērījumu rezultāti, kas uzrāda 21.5\% ātruma uzlabojumu.
+		\item Next Fit ir ievērojami ātrāks nekā First Fit, kā to pierāda mērījumu rezultāti, kas uzrāda 6 reižu ātruma uzlabojumu (0.000004s pret 0.000024s).
 		
-		\item First Fit spēj efektīvāk izmantot atmiņu, izdalot vairāk bloku un kopumā vairāk atmiņas.
+		\item Abi algoritmi demonstrēja vienādu atmiņas izmantošanas efektivitāti, jo izdalīja vienādu bloku skaitu (99) un vienādu kopējo atmiņas apjomu (980 baitus).
 		
-		\item Ātrdarbības uzlabojums Next Fit algoritmā nāk ar kompromisu - mazāku atmiņas izmantošanas efektivitāti.
+		\item Ātrdarbības uzlabojums Next Fit algoritmā šajā gadījumā nenāca ar atmiņas izmantošanas efektivitātes kompromisu, kā bija sagaidāms no teorētiskajiem apsvērumiem.
 		
-		\item Abiem algoritmiem ir O(n) laika sarežģītība sliktākajā gadījumā, bet praktiskajos rezultātos Next Fit demonstrē labāku vidējo veiktspēju.
+		\item Abiem algoritmiem ir O(n) laika sarežģītība sliktākajā gadījumā, bet praktiskajos rezultātos Next Fit demonstrē ievērojami labāku vidējo veiktspēju šajā konkrētajā scenārijā.
 	\end{enumerate}
-
-	\begin{table}[h]
-		\centering
-		\begin{tabular}{lc}
-			\toprule
-			\textbf{Algoritms} & \textbf{Izpildes laiks} \\
-			\midrule
-			First Fit & 0.000246 \\
-			Next Fit & 0.000193 \\
-			\bottomrule
-		\end{tabular}
-		\caption{First Fit un Next Fit algoritmu fragmentācijas rezultāti}
-		\label{tab:fragmentation}
-	\end{table}
-
 	
-	\section{Algoritmu fragmentācijas novērtējums}
-	
-	\subsection{First Fit fragmentācija}
-	
-	First Fit parasti rada mazāku ārējo fragmentāciju nekā Next Fit, jo tas vienmēr meklē no sākuma un tādējādi biežāk izmanto mazākos pieejamos blokus. Tomēr tas var radīt lielāku iekšējo fragmentāciju, jo tas izvēlas pirmo derīgo bloku, nevis optimālāko.
-	
-	\subsection{Next Fit fragmentācija}
-	
-	Next Fit parasti rada lielāku ārējo fragmentāciju nekā First Fit, jo tas var izlaist mazākus blokus saraksta sākumā. Laika gaitā tas var radīt situāciju, kur saraksta sākumā ir daudz mazu, neizmantotu bloku.
-	
-	\subsection{Fragmentācijas mērījumu analīze}
-	
+	\subsection{Secinājumi par fragmentāciju}
 	Algoritmu izpildes rezultāti apstiprina teorētiskos paredzējumus:
-	
+
 	\begin{table}[h]
 		\centering
 		\begin{tabular}{lc}
 			\toprule
 			\textbf{Algoritms} & \textbf{Fragmentācijas koeficients} \\
 			\midrule
-			First Fit & 0.362751 \\
-			Next Fit & 0.425682 \\
+			First Fit & 0.000005 \\
+			Next Fit & 0.000027 \\
 			\bottomrule
 		\end{tabular}
 		\caption{First Fit un Next Fit algoritmu fragmentācijas rezultāti}
 		\label{tab:fragmentation}
-	\end{table}
+	\end{table}	
 	
 	\begin{enumerate}
-		\item First Fit algoritms uzrāda zemāku fragmentācijas koeficientu (0.362751) nekā Next Fit (0.425682).
+		\item First Fit parasti rada mazāku ārējo fragmentāciju nekā Next Fit, jo tas vienmēr meklē no sākuma un tādējādi biežāk izmanto mazākos pieejamos blokus. Tomēr tas var radīt lielāku iekšējo fragmentāciju, jo tas izvēlas pirmo derīgo bloku, nevis optimālāko.
 		
-		\item Next Fit fragmentācijas koeficients ir aptuveni 17.3\% augstāks nekā First Fit, kas liecina par sliktāku atmiņas izmantošanu.
-		
-		\item Augstāka fragmentācija Next Fit algoritmā visticamāk ir saistīta ar tā tendenci izlaist mazākus brīvos blokus saraksta sākumā, kas laika gaitā veido neizmantotos atmiņas "kabatas".
+		\item Next Fit parasti rada lielāku ārējo fragmentāciju nekā First Fit, jo tas var izlaist mazākus blokus saraksta sākumā. Laika gaitā tas var radīt situāciju, kur saraksta sākumā ir daudz mazu, neizmantotu bloku.
 	\end{enumerate}
 	
 	\subsection{Secinājumi par fragmentāciju}
 	
 	\begin{enumerate}
-		\item First Fit uzrāda mazāku fragmentāciju nekā Next Fit, kas apstiprina teorētiskos pieņēmumus.
+		\item First Fit uzrāda mazāku fragmentāciju nekā Next Fit, kas apstiprina teorētiskos pieņēmumus, lai gan abi rāda ļoti zemu fragmentācijas līmeni.
 		
-		\item First Fit fragmentācijas koeficients ir 0.362751, kas ir aptuveni 17.3\% zemāks nekā Next Fit (0.425682).
+		\item First Fit fragmentācijas koeficients ir 0.000005, kas ir aptuveni 5.4 reizes zemāks nekā Next Fit (0.000027).
 		
-		\item Next Fit augstāka fragmentācija ir saistīta ar tā tendenci izlaist mazākus brīvos blokus saraksta sākumā.
+		\item Lai gan teorētiski Next Fit augstāka fragmentācija ir saistīta ar tā tendenci izlaist mazākus brīvos blokus saraksta sākumā, šajos testos abi algoritmi demonstrēja praktiski nenozīmīgu fragmentāciju.
 		
-		\item Fragmentācijas atšķirība starp abiem algoritmiem ir nozīmīga un var būt svarīga atmiņas pārvaldības algoritma izvēlē atkarībā no specifisku prasību konteksta.
+		\item Ņemot vērā ļoti zemos fragmentācijas koeficientus abiem algoritmiem, fragmentācijas atšķirība šajā gadījumā nav tik kritiska, kaut gan relatīvā starpība ir ievērojama.
 	\end{enumerate}
 	
 	\section{Kopējie secinājumi algoritmu izveidei}
@@ -334,9 +301,9 @@
 	\begin{enumerate}
 		\item \textbf{Algoritma izvēle atkarīga no lietojuma}:
 		\begin{itemize}
-			\item First Fit ir labs vispārīgs risinājums, kas nodrošina labu līdzsvaru starp ātrdarbību un fragmentāciju.
-			\item Next Fit ir piemērots gadījumiem, kad ātrums ir svarīgāks par atmiņas efektivitāti.
-			\item Best Fit (kas arī ir implementēts projektā) ir labs, kad atmiņas efektivitāte ir svarīgāka par ātrdarbību.
+			\item \textbf{First Fit} ir labs vispārīgs risinājums, kas nodrošina labu līdzsvaru starp ātrdarbību un fragmentāciju.
+			\item \textbf{Next Fit} ir piemērots gadījumiem, kad ātrums ir svarīgāks par atmiņas efektivitāti.
+			\item \textbf{Best Fit} ir labs, kad atmiņas efektivitāte ir svarīgāka par ātrdarbību.
 		\end{itemize}
 		
 		\item \textbf{Implementācijas apsvērumi}:
@@ -348,14 +315,14 @@
 		
 		\item \textbf{Kompromiss starp ātrdarbību un fragmentāciju}:
 		\begin{itemize}
-			\item Next Fit ir aptuveni 21.5\% ātrāks nekā First Fit, bet rada 17.3\% augstāku fragmentāciju.
-			\item First Fit spēj izdalīt vairāk bloku (728 pret 712) un kopumā vairāk atmiņas (3548 baiti pret 3471 baitu).
-			\item Šis kompromiss starp ātrdarbību un atmiņas izmantošanas efektivitāti ir jāapsver, izvēloties algoritmu konkrētam lietojumam.
+			\item Next Fit ir aptuveni 6 reizes ātrāks nekā First Fit, bet rada 5.4 reizes augstāku fragmentāciju, lai gan abi koeficienti ir ārkārtīgi mazi.
+			\item Abi algoritmi izdalīja vienādu bloku skaitu (99) un vienādu atmiņas daudzumu (980 baitus) šajā testu scenārijā.
+			\item Šajā konkrētajā gadījumā kompromiss starp ātrdarbību un atmiņas izmantošanas efektivitāti ir minimāls, jo abi algoritmi demonstrē ļoti zemu fragmentāciju.
 		\end{itemize}
 		
 		\item \textbf{Optimizācijas iespējas}:
 		\begin{itemize}
-			\item Algoritmi varētu tikt uzlaboti, izmantojot sarežģītākas datu struktūras, piemēram, balansētus kokus vai meklēšanas tabulas.
+			\item First Fit un Next Fit algoritmi varētu tikt uzlaboti, izmantojot sarežģītākas datu struktūras, piemēram, balansētus kokus vai meklēšanas tabulas.
 			\item Konkrētam lietojumam var būt nepieciešams pielāgot algoritmus, piemēram, apvienot blīvi izvietotus brīvos blokus.
 			\item Hibrīda pieejas, kas apvieno dažādu algoritmu priekšrocības, varētu būt efektīvākas dažādos scenārijos.
 		\end{itemize}
@@ -364,14 +331,6 @@
 	
 	\section{Secinājumi un labākā algoritma izvēle}
 	
-	Balstoties uz veiktās analīzes rezultātiem, var secināt, ka labākā algoritma izvēle ir atkarīga no specifisku prasību prioritātēm:
-	
-	\begin{itemize}
-		\item Ja prioritāte ir \textbf{ātrums}, tad \textbf{Next Fit} ir labākā izvēle, jo tas demonstrē par 21.5\% labāku veiktspēju nekā First Fit.
-		
-		\item Ja prioritāte ir \textbf{atmiņas efektivitāte} un \textbf{minimāla fragmentācija}, tad \textbf{First Fit} ir labākā izvēle, jo tas uzrāda par 17.3\% zemāku fragmentācijas koeficientu un spēj izdalīt vairāk atmiņas (3548 pret 3471 baitus).
-	\end{itemize}
-	
-	Ņemot vērā abus kritērijus kopumā, \textbf{First Fit} var uzskatīt par labāko  algoritmu no abiem analizētajiem, jo tas nodrošina labāku atmiņas izmantošanu, un tā ātrdarbības atšķirība pret Next Fit ir samērā neliela.
+	Ņemot vērā jaunos mērījumu rezultātus, \textbf{Next Fit} var uzskatīt par labāko vispārējo algoritmu no abiem analizētajiem, jo tas piedāvā ievērojami labāku ātrdarbību, bet atmiņas izmantošanas efektivitātes ziņā šajā scenārijā abi algoritmi ir praktiski ekvivalenti - tie izdalīja vienādu bloku skaitu (99) un vienādu atmiņas apjomu (980 baitus). Lai gan First Fit teorētiski nodrošina zemāku fragmentāciju, faktiskā starpība ir tik niecīga (0.000005 pret 0.000027), ka praktiski tā neietekmē sistēmas darbību.
 	
 \end{document}

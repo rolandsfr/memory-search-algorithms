@@ -1,14 +1,15 @@
 #include <stdlib.h>
 #include <algorithms.h>
 #include <parsers.h>
+#include <evaluation.h>
 
 #define MEMORY_CAP 1024
 
-typedef struct Node {
-    long int value;
-    int is_free;
-    struct Node* next;
-} Node;
+// typedef struct Node {
+//     long int value;
+//     int is_free;
+//     struct Node* next;
+// } Node;
 
 Node* create_node(int value) {
     Node* node = (Node*)(malloc(sizeof(Node)));
@@ -63,6 +64,21 @@ void search_best_fit(FILE* chunks_fs , FILE* sizes_fs) {
     int size;
     int total_allocated_size = 0;
     int allocations_succeeded = 0;
+
+    int largest_request = 0;
+    clock_t start, end;
+
+    while((size = read_next_int(sizes_fs)) != EOF) {
+      if (size > largest_request) {
+        largest_request = size;
+      }
+    }
+    rewind(sizes_fs);
+
+    /* Sākam mērīt laiku */
+    start = clock();
+
+
     while((size = read_next_int(sizes_fs)) != EOF) {
         Node* min = find_min(size, memory);
 
@@ -84,6 +100,13 @@ void search_best_fit(FILE* chunks_fs , FILE* sizes_fs) {
 
         memory = memory_head;
     } 
+    
+    end = clock();
+
+    printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+    printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
+    printf(" - Allocated blocks: %d\n", allocations_succeeded);
+    printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
 
     printf("Allocations succeeded: %d\nTotal memory allocated: %d\n", allocations_succeeded, total_allocated_size);
 

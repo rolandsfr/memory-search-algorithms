@@ -47,6 +47,12 @@ next_fit:
 first_fit:
 	./$(TARGET) -c x1 -s x2 -a first_fit  > first_fit.txt
 
+run_all:
+	./$(TARGET) -c x1 -s x2 -a next_fit  > next_fit.txt
+	./$(TARGET) -c x1 -s x2 -a first_fit  > first_fit.txt
+	./$(TARGET) -c x1 -s x2 -a best_fit  > best_fit.txt
+	./$(TARGET) -c x1 -s x2 -a worst_fit  > worst_fit.txt
+
 
 # Phony targets to avoid conflicts with file names
 .PHONY: clean run

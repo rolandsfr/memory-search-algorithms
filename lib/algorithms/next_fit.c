@@ -63,14 +63,7 @@ void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
   int size;
   int total_allocated_size = 0;
   int allocations_succeeded = 0;
-  int largest_request = 0;
-
-  while((size = read_next_int(sizes_fs)) != EOF) {
-    if (size > largest_request) {
-      largest_request = size;
-    }
-  }
-  rewind(sizes_fs);
+  int largest_request = get_largest_req(sizes_fs);
 
   /* Sākam mērīt laiku */
   start = clock();
@@ -84,16 +77,12 @@ void search_next_fit(FILE* chunks_fs, FILE* sizes_fs) {
       next_fit->is_free = 0;
       total_allocated_size += size;
       allocations_succeeded++;
-      /* printf("\tChunk for %d -> %lu\n", size, (unsigned long)(first_fit->value)); */
     } 
   } 
   /* Beidzam mērīt laiku */
   end = clock();
 
-  printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
-  printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
-  printf(" - Allocated blocks: %d\n", allocations_succeeded);
-  printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
+  print_results(start, end, memory, largest_request, allocations_succeeded, total_allocated_size);
 }
 
 SearchAlgorithm search_next_fit_runner = {

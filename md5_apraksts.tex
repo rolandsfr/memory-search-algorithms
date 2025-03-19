@@ -16,7 +16,7 @@
 
 
 \title{Mājas darbs \#5 - Atmiņas fragmentācija}
-\author{Rolands \\ Agris}
+\author{Rolands Frīdemanis, rf23009 \\ Agris Pudāns, ap08426}
 \date{}
 
 \begin{document}
@@ -27,7 +27,9 @@
 	
 	\section{Ievads}
 	
-	Projekts ir veidots, lai testētu un salīdzinātu dažādus atmiņas rezervēšanas algoritmus. Tā struktūra ir organizēta šādi:
+	Projekta komandas dalībnieki ir Agris Pudāns un Rolands Frīdemanis. Katra dalībnieka ieguldījums ir vērtējams 50/100.
+	
+	Projekts ir veidots, lai testētu un salīdzinātu dažādus atmiņas rezervēšanas algoritmus. Testa kopām ir iz mantota viena no publiskajām - [http://selavo.lv/kursi/lsp/2013/mem-frag-tests/mem-frag-tests-2.zip]. Projekta struktūra ir organizēta šādi:
 	
 	\begin{itemize}
 		\item \textbf{Galvenais fails (\texttt{main.c})}: Apstrādā ievadi, izvēlas atbilstošo algoritmu un izpilda to.
@@ -42,10 +44,10 @@
 	
 	Projekts implementē sekojošus atmiņas rezervēšanas algoritmus:
 	\begin{itemize}
-		\item \textbf{Best Fit}: Meklē mazāko pieejamo atmiņas bloku, kas ir pietiekami liels
-		\item \textbf{First Fit}: Izmanto pirmo pieejamo bloku, kas ir pietiekami liels
-		\item \textbf{Next Fit}: Līdzīgs First Fit, bet turpina meklēšanu no pēdējā izdalītā bloka
-		\item \textbf{Worst Fit}: (Nav pilnībā implementēts)
+		\item \textbf{Best Fit}: Meklē mazāko pieejamo atmiņas bloku, kas ir pietiekami liels. Šis algoritms cenšas minimizēt iekšējo fragmentāciju, izvēloties bloku, kas vistuvāk atbilst nepieciešamajam izmēram.
+		\item \textbf{First Fit}: Izmanto pirmo pieejamo bloku, kas ir pietiekami liels. Šis ir vienkāršākais un bieži vien efektīvākais algoritms.
+		\item \textbf{Next Fit}: Līdzīgs First Fit, bet turpina meklēšanu no pēdējā izdalītā bloka, lai paātrinātu meklēšanas procesu.
+		\item \textbf{Worst Fit}: Meklē lielāko pieejamo bloku atmiņā. Šis algoritms cenšas maksimizēt atlikušos fragmentus, lai tie būtu pietiekami lieli nākamajiem pieprasījumiem, bet var radīt lielāku iekšējo fragmentāciju.
 	\end{itemize}
 	
 	Projekts izmanto vienvirziena saistīto sarakstu, lai attēlotu atmiņu, kur katrs mezgls satur informāciju par bloka izmēru un to, vai tas ir brīvs vai aizņemts. Saistītā saraksta struktūra ir definēta šādi:
@@ -58,7 +60,7 @@
 		} Node;
 	\end{minted}
 	
-	\section{First Fit un Next Fit algoritmu realizācijas}
+	\section{Atmiņas rezervēšanas algoritmu realizācijas}
 	
 	\subsection{First Fit algoritma realizācija}
 	
@@ -68,7 +70,7 @@
 		\item Sliktākais gadījums: O(n)
 	\end{itemize}
 	
-	First Fit vienmēr sāk meklēšanu no saraksta sākuma, tāpēc tas var būt lēnāks algoritms, jo katra pieprasījuma gadījumā ir jāmeklē no sākuma. Tomēr tas bieži vien ir ātrāks nekā Best Fit, jo tam nav jāmeklē visoptimālākais bloks.
+	First Fit vienmēr sāk meklēšanu no saraksta sākuma, tāpēc tas var būt lēnāks algoritms, jo katra pieprasījumas ir jāmeklē no sākuma. Tomēr tas bieži vien ir ātrāks nekā Best Fit, jo tam nav jāmeklē visoptimālākais bloks.
 	
 	Algoritma realizācija ir šāda:
 	
@@ -95,40 +97,33 @@
 		\item Sliktākais gadījums: O(n)
 	\end{itemize}
 	
-	Next Fit teorētiski var būt ātrāks nekā First Fit, jo tas turpina meklēšanu no pēdējā izdalītā bloka, nevis sāk no saraksta sākuma. Tomēr realitātē tā efektivitāte ir atkarīga no pieprasījumu un brīvo bloku izvietojuma.
+	Next Fit teorētiski var būt ātrāks nekā First Fit, jo tas turpina meklēšanu no pēdējā izdalītā bloka, nevis sāk no saraksta sākuma. Tas gan var būt atkarīgs no pieprasījumu un brīvo bloku izvietojuma. 
 	
-	Algoritma realizācija ir šāda:
+	\subsection{Best Fit algoritma realizācija}
 	
-	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
-		Node* find_next_fit(int size, Node* memory, Node** last_alloc) {
-			Node* curr = *last_alloc ? (*last_alloc)->next : memory;
-			
-			while (curr != NULL) {
-				if (curr->is_free && curr->value >= size) {
-					*last_alloc = curr;
-					return curr;
-				}
-				curr = curr->next;
-			}
-			
-			curr = memory;
-			while (curr != *last_alloc) {
-				if (curr->is_free && curr->value >= size) {
-					*last_alloc = curr;
-					return curr;
-				}
-				curr = curr->next;
-			}
-			
-			return NULL; 
-		}
-	\end{minted}
+	Best Fit algoritma laika sarežģītība:
+	\begin{itemize}
+		\item Vidējais gadījums: O(n), kur n ir bloku skaits
+		\item Sliktākais gadījums: O(n)
+	\end{itemize}
+	
+	Best Fit algoritms pārskata visus pieejamos blokus un izvēlas to, kurš ir vistuvāk nepieciešamajam izmēram, bet joprojām ir pietiekami liels. Šādi samazinās iekšējā fragmentācija. Bet tas ir lēnāks par First Fit vai Next fit, jo ir nepieciešams pārskatīt visus blokus. 
+	
+	\subsection{Worst Fit algoritma realizācija}
+	
+	Worst Fit algoritma laika sarežģītība:
+	\begin{itemize}
+		\item Vidējais gadījums: O(n), kur n ir bloku skaits
+		\item Sliktākais gadījums: O(n)
+	\end{itemize}
+	
+	Worst Fit algoritms ir pretējs Best Fit - tas meklē lielāko pieejamo bloku, lai tajā ievietotu pieprasīto atmiņu. Algoritma mērķis ir atstāt pēc iespējas lielākus brīvos fragmentus, lai tie būs lietderīgāki nākotnes pieprasījumiem. Šis algoritms var radīt lielāku iekšējo fragmentāciju un sliktāku atmiņas izmantošanu.
 	
 	\section{Laika mērījumu apraksts}
 	
-	Gan First Fit, gan Next Fit algoritmos laika mērījums tiek veikts, izmantojot standarta C bibliotēkas funkciju \texttt{clock()}. Laika mērīšanas process notiek šādi:
+	Visos algoritmos, First Fit, Next Fit, Best Fit un Worst Fit, laika mērījums tiek veikts, izmantojot standarta C bibliotēkas funkciju \texttt{clock()}. Laika mērīšanas process notiek šādi:
 	
-	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
+	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble]{c}
 		start = clock();
 		
 		// ... algoritma izpilde ...
@@ -138,13 +133,13 @@
 		printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 	\end{minted}
 	
-	Šis ir standarta veids, kā mērīt algoritmu izpildes laiku C valodā. \texttt{CLOCKS\_PER\_SEC} ir konstante, kas norāda pulksteņa tikšķu skaitu sekundē, un tiek izmantota, lai pārveidotu pulksteņa tikšķus sekundēs.
+	\texttt{CLOCKS\_PER\_SEC} ir konstante, kas norāda pulksteņa tikšķu skaitu sekundē, un tiek izmantota, lai pārveidotu pulksteņa tikšķus sekundēs.
 	
 	\section{Fragmentācijas mērījuma funkcija}
 	
-	Fragmentācija ir svarīgs rādītājs atmiņas pārvaldības algoritmu novērtēšanā. Šajā projektā fragmentācija tiek aprēķināta ar \texttt{calculate\_fragmentation} funkciju:
+	Fragmentācija ir svarīgs rādītājs atmiņas pārvaldības algoritmu novērtēšanā. Šajā projektā fragmentāciju aprēķina ar \texttt{calculate\_fragmentation} funkciju:
 	
-	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble, tabsize=4]{c}
+	\begin{minted}[linenos, breaklines, fontsize=\small, autogobble]{c}
 		double calculate_fragmentation(Node* memory, int largest_request) {
 			size_t total_free = 0;
 			size_t largest_free_block = 0;
@@ -221,50 +216,61 @@
 	
 	Šī metrika ir īpaši noderīga, lai salīdzinātu dažādus atmiņas pārvaldības algoritmus, jo tā ņem vērā praktiskos ierobežojumus - atmiņas bloki, kas ir pārāk mazi, faktiski kļūst nelietojami lielu pieprasījumu gadījumā. Tas ir reāls fragmentācijas efekts, ko algoritmi cenšas minimizēt.
 	
-	\section{Algoritmu ātrdarbības novērtējums}
-		
-	No algoritmu izpildes rezultātiem (sk. 1. tabulu) var analizēt algoritmu veiktspēju un var secinānt, ka:
+	\section{Algoritmu realizācijas novērtējums}
+	
+	No algoritmu izpildes rezultātiem (sk. 1. tabulu) var analizēt algoritmu veiktspēju un var secināt, ka:
 	
 	\begin{enumerate}
-		\item \textbf{Izpildes laiks}: Next Fit algoritms izpildās aptuveni 6 reizes ātrāk nekā First Fit (0.000004s pret 0.000024s), kas ievērojami pārsniedz teorētiskos paredzējumus. Tas demonstrē Next Fit algoritma priekšrocību, kad tas turpina meklēšanu no pēdējā izdalītā bloka, nevis katru reizi sāk no saraksta sākuma.
+		\item \textbf{Izpildes laiks}: Next Fit algoritms ir visātrākais un gandrīz 6 reizes ātrāks par First Fit, 10 reizes ātrāks par Worst Fit un aptuveni 42 reizes ātrāks par Best Fit. Šie rezultāti atbilst teorētiskajām prognozēm, kur algoritmi, kas meklē optimālo bloku (Best Fit), ir lēnāki nekā tie, kas apstājas pie pirmā pieņemamā bloka (First Fit, Next Fit).
 		
-		\item \textbf{Izdalīto bloku skaits}: Abi algoritmi izdalīja vienādu bloku skaitu (99), kas norāda, ka šajā konkrētajā testu scenārijā abi algoritmi spēja apmierināt tādu pašu pieprasījumu skaitu.
+		\item \textbf{Izdalīto bloku skaits}: First Fit un Next Fit izdalīja vienādu bloku skaitu, kas ir ievērojami vairāk nekā Best Fit vai Worst Fit. Šāda atšķirība liecina par dažādu algoritmu stratēģiju ietekmi uz atmiņas izmantošanas efektivitāti.
 		
-		\item \textbf{Kopējā izdalītā atmiņa}: Abi algoritmi izdalīja vienādu atmiņas apjomu (980 baitus), kas atbilst vienādam izdalīto bloku skaitam.
+		\item \textbf{Kopējā izdalītā atmiņa}: First Fit un Next Fit izdalīja vienādu, 980 baitu, atmiņas apjomu, Best Fit izdalīja 1024 baitus, bet Worst Fit tikai 1000 baitus. Lai arī Best Fit izdalīja mazāk bloku, tomēr kopā izdalīja vairāk atmiņas. Tas liecina, ka tas efektīvāk aizpildīja pieejamo atmiņas telpu.
 	\end{enumerate}
 	
 	\begin{table}[h]
 		\centering
-		\begin{tabular}{lcc}
+		\begin{tabular}{lcccc}
 			\toprule
-			\textbf{Metrika} & \textbf{First Fit} & \textbf{Next Fit} \\
+			\textbf{Metrika} & \textbf{First Fit} & \textbf{Next Fit} & \textbf{Best Fit} & \textbf{Worst Fit} \\
 			\midrule
-			Izpildes laiks (sekundes) & 0.000024 & 0.000004 \\
-			Fragmentācijas koeficients & 0.000005 & 0.000027 \\
-			Izdalīto bloku skaits & 99 & 99 \\
-			Kopējā izdalītā atmiņa (baiti) & 980 & 980 \\
+			Izpildes laiks (sekundes) & 0.000024 & 0.000004 & 0.000168 & 0.000040 \\
+			Fragmentācijas koeficients & 0.000005 & 0.000027 & 0.000093 & 0.000031 \\
+			Izdalīto bloku skaits & 99 & 99 & 56 & 5 \\
+			Kopējā izdalītā atmiņa (baiti) & 980 & 980 & 1024 & 1000 \\
 			\bottomrule
 		\end{tabular}
-		\caption{First Fit un Next Fit algoritmu mērījumu rezultāti}
+		\caption{Visu algoritmu mērījumu rezultāti}
 		\label{tab:performance}
 	\end{table}
 	
-	\subsection{Secinājumi par ātrdarbību}
+	\subsection{Ātrdarbības novērtējums}
 	
-	Saskaņā ar teorētiskiem apsvērumiem un praktiskiem mērījumiem:
+	Saskaņā ar teorētiskiem apsvērumiem un mērījumiem:
 	
 	\begin{enumerate}
-		\item Next Fit ir ievērojami ātrāks nekā First Fit, kā to pierāda mērījumu rezultāti, kas uzrāda 6 reižu ātruma uzlabojumu (0.000004s pret 0.000024s).
+		\item \textbf{Next Fit} ir visātrākais no visiem testētajiem algoritmiem, kas padara to ideālu lietojumiem, kur svarīgs ir izpildes ātrums.
 		
-		\item Abi algoritmi demonstrēja vienādu atmiņas izmantošanas efektivitāti, jo izdalīja vienādu bloku skaitu (99) un vienādu kopējo atmiņas apjomu (980 baitus).
+		\item \textbf{Best Fit} ir visslēnākais algoritms, jo tas vienmēr pārmeklē visu sarakstu, lai atrastu optimālo bloku. Šis rezultāts atbilst teorētiski paredzētajam - jo sarežģītāka bloka izvēles stratēģija, jo ilgāks izpildes laiks.
 		
-		\item Ātrdarbības uzlabojums Next Fit algoritmā šajā gadījumā nenāca ar atmiņas izmantošanas efektivitātes kompromisu, kā bija sagaidāms no teorētiskajiem apsvērumiem.
+		\item \textbf{Worst Fit} ir ātrāks nekā Best Fit, bet lēnāks nekā First Fit un Next Fit. Tas arī atbilst teorijai, jo, tāpat kā Best Fit, tam jāpārmeklē viss saraksts, bet atlases kritērijs ir vienkāršāks par to.
 		
-		\item Abiem algoritmiem ir O(n) laika sarežģītība sliktākajā gadījumā, bet praktiskajos rezultātos Next Fit demonstrē ievērojami labāku vidējo veiktspēju šajā konkrētajā scenārijā.
+		\item Atmiņas izmantošanas efektivitātes ziņā šie algoritmi demonstrē dažādus rezultātus - Next Fit un First Fit izdalīja visvairāk bloku, Best Fit izdalīja mazāk, bet Worst Fit izdalīja vismazāk bloku (5), kas var liecināt par algoritma neefektivitāti.
 	\end{enumerate}
 	
-	\subsection{Secinājumi par fragmentāciju}
-	Algoritmu izpildes rezultāti apstiprina teorētiskos paredzējumus:
+	\subsection{Fragmentācijas novērtējums}
+	
+	Algoritmu izpildes rezultāti fragmentācijas ziņā ir apkopoti 2. tabulā. Analizējot algoritmu ietekmi uz atmiņas fragmentāciju, var novērot šādas likumsakarības:
+	
+	\begin{enumerate}
+		\item \textbf{First Fit} parasti rada mazāku fragmentāciju nekā Next Fit, jo tas vienmēr meklē no sākuma un tādējādi biežāk izmanto mazākos pieejamos blokus. Mūsu mērījumi to apstiprina, uzrādot viszemāko fragmentācijas koeficientu.
+		
+		\item \textbf{Next Fit} parasti rada lielāku ārējo fragmentāciju nekā First Fit, jo tas var izlaist mazākus blokus saraksta sākumā. Tā fragmentācijas koeficients ir aptuveni 5.4 reizes augstāks nekā First Fit testa piemērā.
+		
+		\item Interesanti, ka Best Fit, kas teorētiski būtu jāoptimizē, lai samazinātu fragmentāciju, uzrāda augstāko fragmentācijas koeficientu. 
+		
+		\item Worst Fit uzrāda zemāku fragmentācijas koeficientu, kas ir tikai nedaudz augstāks nekā Next Fit. Tas varētu būt skaidrojams ar to, ka Worst Fit izdalīja ļoti maz bloku (5) katru pa 200 baitiem testa piemērā, tādējādi atstājot lielāko daļu atmiņas neskartu un brīvu.
+	\end{enumerate}
 
 	\begin{table}[h]
 		\centering
@@ -274,38 +280,38 @@
 			\midrule
 			First Fit & 0.000005 \\
 			Next Fit & 0.000027 \\
+			Best Fit & 0.000093 \\
+			Worst Fit & 0.000031 \\
 			\bottomrule
 		\end{tabular}
-		\caption{First Fit un Next Fit algoritmu fragmentācijas rezultāti}
+		\caption{Visu algoritmu fragmentācijas rezultāti}
 		\label{tab:fragmentation}
 	\end{table}	
-	
-	\begin{enumerate}
-		\item First Fit parasti rada mazāku ārējo fragmentāciju nekā Next Fit, jo tas vienmēr meklē no sākuma un tādējādi biežāk izmanto mazākos pieejamos blokus. Tomēr tas var radīt lielāku iekšējo fragmentāciju, jo tas izvēlas pirmo derīgo bloku, nevis optimālāko.
-		
-		\item Next Fit parasti rada lielāku ārējo fragmentāciju nekā First Fit, jo tas var izlaist mazākus blokus saraksta sākumā. Laika gaitā tas var radīt situāciju, kur saraksta sākumā ir daudz mazu, neizmantotu bloku.
-	\end{enumerate}
+
 	
 	\subsection{Secinājumi par fragmentāciju}
 	
 	\begin{enumerate}
-		\item First Fit uzrāda mazāku fragmentāciju nekā Next Fit, kas apstiprina teorētiskos pieņēmumus, lai gan abi rāda ļoti zemu fragmentācijas līmeni.
+		\item First Fit uzrāda viszemāko fragmentāciju no visiem algoritmiem, kas padara to piemērotu lietojumiem, kur atmiņas efektīva izmantošana ir prioritāte.
 		
-		\item First Fit fragmentācijas koeficients ir 0.000005, kas ir aptuveni 5.4 reizes zemāks nekā Next Fit (0.000027).
+		\item Best Fit, pretēji teorētiskajiem paredzējumiem, uzrāda augstāko fragmentācijas koeficientu. Tas liecina, ka teorētiski "optimālākā" bloka izvēle ne vienmēr veda pie visefektīvākās atmiņas izmantošanas praktiskajā testā.
 		
-		\item Lai gan teorētiski Next Fit augstāka fragmentācija ir saistīta ar tā tendenci izlaist mazākus brīvos blokus saraksta sākumā, šajos testos abi algoritmi demonstrēja praktiski nenozīmīgu fragmentāciju.
+		\item Worst Fit, kaut arī izdalīja vismazāk bloku, neuzrādīja augstāko fragmentācijas koeficientu. Tas norāda, ka fragmentācijas līmenis ne vienmēr korelē ar izdalīto bloku skaitu.
 		
-		\item Ņemot vērā ļoti zemos fragmentācijas koeficientus abiem algoritmiem, fragmentācijas atšķirība šajā gadījumā nav tik kritiska, kaut gan relatīvā starpība ir ievērojama.
+		\item Kopumā visi algoritmi uzrādīja ļoti zemu fragmentācijas līmeni (koeficienti zem 0.0001), kas liecina, ka šajā konkrētajā testā fragmentācija nebija nozīmīga problēma nevienam no algoritmiem.
 	\end{enumerate}
+	
+	\section{Kopējie secinājumi un labākā algoritma izvēle}
 	
 	\subsection{Secinājumi algoritmu izvēlei}
 	
 	\begin{enumerate}
 		\item \textbf{Algoritma izvēle atkarīga no lietojuma}:
 		\begin{itemize}
-			\item \textbf{First Fit} ir labs vispārīgs risinājums, kas nodrošina labu līdzsvaru starp ātrdarbību un fragmentāciju.
-			\item \textbf{Next Fit} ir piemērots gadījumiem, kad ātrums ir svarīgāks par atmiņas efektivitāti.
-			\item \textbf{Best Fit} ir labs, kad atmiņas efektivitāte ir svarīgāka par ātrdarbību.
+			\item \textbf{First Fit} ir labs vispārīgs risinājums, kas nodrošina zemu fragmentāciju un labu izpildes laiku.
+			\item \textbf{Next Fit} ir ideāls, kad ātrums ir galvenā prioritāte un fragmentācija ir mazāk svarīga.
+			\item \textbf{Best Fit} ir piemērots situācijām, kad vēlamies maksimāli izmantot pieejamo atmiņu, pat ja tas prasa ilgāku izpildes laiku.
+			\item \textbf{Worst Fit} šajā testā parādīja sliktākos rezultātus bloku izdalīšanas ziņā, bet var būt noderīgs ļoti specifiskās situācijās, kur vajadzīgs zems fragmentācijas līmenis un ātrs izpildes laiks.
 		\end{itemize}
 		
 		\item \textbf{Realizācijas apsvērumi}:
@@ -318,13 +324,14 @@
 		\item \textbf{Kompromiss starp ātrdarbību un fragmentāciju}:
 		\begin{itemize}
 			\item Next Fit ir aptuveni 6 reizes ātrāks nekā First Fit, bet rada 5.4 reizes augstāku fragmentāciju, lai gan abi koeficienti ir ārkārtīgi mazi.
-			\item Abi algoritmi izdalīja vienādu bloku skaitu (99) un vienādu atmiņas daudzumu (980 baitus) šajā testu scenārijā.
-			\item Šajā konkrētajā gadījumā kompromiss starp ātrdarbību un atmiņas izmantošanas efektivitāti ir minimāls, jo abi algoritmi demonstrē ļoti zemu fragmentāciju.
+			\item Best Fit ir aptuveni 7 reizes lēnāks nekā Next Fit, bet izdalīja vairāk kopējās atmiņas (1024 pret 980 baitiem).
+			\item Worst Fit ir ātrāks nekā Best Fit, bet izdalīja ievērojami mazāk bloku (5 pret 56).
+			\item Šajā konkrētajā gadījumā kompromiss starp ātrdarbību un atmiņas izmantošanas efektivitāti ir minimāls, jo visi algoritmi demonstrē ļoti zemu fragmentāciju.
 		\end{itemize}
 		
 		\item \textbf{Optimizācijas iespējas}:
 		\begin{itemize}
-			\item First Fit un Next Fit algoritmi varētu tikt uzlaboti, izmantojot sarežģītākas datu struktūras, piemēram, balansētus kokus vai meklēšanas tabulas.
+			\item Visi algoritmi varētu tikt uzlaboti, izmantojot sarežģītākas datu struktūras, piemēram, balansētus kokus vai meklēšanas tabulas.
 			\item Konkrētam lietojumam var būt nepieciešams pielāgot algoritmus, piemēram, apvienot blīvi izvietotus brīvos blokus.
 			\item Hibrīda pieejas, kas apvieno dažādu algoritmu priekšrocības, varētu būt efektīvākas dažādos scenārijos.
 		\end{itemize}
@@ -333,6 +340,19 @@
 	
 	\subsection{Labākā algoritma izvēle}
 	
-	Ņemot vērā jaunos mērījumu rezultātus, \textbf{Next Fit} var uzskatīt par labāko vispārējo algoritmu no abiem analizētajiem, jo tas piedāvā ievērojami labāku ātrdarbību, bet atmiņas izmantošanas efektivitātes ziņā šajā scenārijā abi algoritmi ir praktiski ekvivalenti - tie izdalīja vienādu bloku skaitu (99) un vienādu atmiņas apjomu (980 baitus). Lai gan First Fit teorētiski nodrošina zemāku fragmentāciju, faktiskā starpība ir tik niecīga (0.000005 pret 0.000027), ka praktiski tā neietekmē sistēmas darbību.
+	Ņemot vērā visus mērījumu rezultātus, varam secināt, ka labākā algoritma izvēle ir atkarīga no specifisku prasību prioritātēm:
 	
+	\begin{itemize}
+		\item Ja prioritāte ir \textbf{ātrums}, tad \textbf{Next Fit} ir nepārprotami labākā izvēle, jo tas demonstrē vislabāko izpildes laiku (0.000004s) un spēj izdalīt lielu bloku skaitu (99).
+		
+		\item Ja prioritāte ir \textbf{maksimāla atmiņas izdalīšana}, tad \textbf{Best Fit} sniedz labākos rezultātus, izdalot visvairāk atmiņas, kas ir vienāda ar maksimālo izmantojamo (1024 baiti), lai gan ir ar ilgāku izpildes laiku un augstāku fragmentāciju.
+	\end{itemize}
+		
+		Kopumā, balstoties uz šiem mērījumiem un analizējot visus algoritmus, \textbf{Next Fit} un \textbf{First Fit} ir vispiemērotākie vispārējai lietošanai:
+		
+	\begin{itemize}
+		\item \textbf{Next Fit} ir optimālā izvēle, kad izpildes ātrums ir kritisks - tas ir ievērojami ātrāks par citiem algoritmiem, izdalīja daudz bloku un uzrādīja pieņemamu fragmentācijas līmeni.
+		
+		\item \textbf{Best Fit} uzrādīja lēnāku izpildes laiku, bet izdalīja visu atvēlēto atmiņu. Ņemot vērā iespējamās optimizācijas, piemēram, izmantojot BST, šis algoritms ir labākais. 
+	\end{itemize}
 \end{document}

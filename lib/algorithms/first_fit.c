@@ -79,20 +79,12 @@ void search_first_fit_0(FILE* chunks_fs , FILE* sizes_fs) {
 void search_first_fit(FILE* chunks_fs, FILE* sizes_fs) {
   Node* memory = create_ff_list(chunks_fs);
   Node* first_fit = NULL;
-  int largest_request = 0;
   int size;
+  clock_t start, end;
   int total_allocated_size = 0;
   int allocations_succeeded = 0;
-  clock_t start, end;
+  int largest_req = get_largest_req(sizes_fs);
 
-  while((size = read_next_int(sizes_fs)) != EOF) {
-    if (size > largest_request) {
-      largest_request = size;
-    }
-  }
-  rewind(sizes_fs);
-
-  /* Sākam mērīt laiku */
   start = clock();
 
   while((size = read_next_int(sizes_fs)) != EOF) {
@@ -106,17 +98,13 @@ void search_first_fit(FILE* chunks_fs, FILE* sizes_fs) {
       first_fit->is_free = 0;
       total_allocated_size += size;
       allocations_succeeded++;
-      /* printf("\tChunk for %d -> %lu\n", size, (unsigned long)(first_fit->value)); */
     }
   }
 
   /* Beidzam mērīt laiku */
   end = clock();
 
-  printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
-  printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
-  printf(" - Allocated blocks: %d\n", allocations_succeeded);
-  printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
+  print_results(start, end, memory, largest_req, allocations_succeeded, total_allocated_size);
 
 }
 

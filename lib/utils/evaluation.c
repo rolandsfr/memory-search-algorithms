@@ -1,6 +1,28 @@
 #include <stdio.h>
 #include <time.h>
+#include <parsers.h>
 #include "evaluation.h"
+
+int get_largest_req(FILE* sizes_fs) {
+  int size;
+  int largest_request = 0;
+
+  while((size = read_next_int(sizes_fs)) != EOF) {
+    if (size > largest_request) {
+      largest_request = size;
+    }
+  }
+  rewind(sizes_fs); 
+
+  return largest_request;
+}
+
+void print_results(clock_t start, clock_t end, Node* memory, int largest_request, int allocations_succeeded, int total_allocated_size) {
+  printf(" - Time taken, seconds: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+  printf(" - Fragmentation ratio: %f\n", calculate_fragmentation(memory, largest_request));
+  printf(" - Allocated blocks: %d\n", allocations_succeeded);
+  printf(" - Total memory allocated, bytes: %d\n", total_allocated_size);
+}
 
 double calculate_fragmentation(Node* memory, int largest_request) {
   size_t total_free = 0;
